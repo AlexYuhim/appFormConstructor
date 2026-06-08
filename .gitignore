@@ -32,4 +32,5 @@ docker-data/
 # Misc
 coverage/
 .turbo/
-.roo
+.roo.roo/
+plans/
