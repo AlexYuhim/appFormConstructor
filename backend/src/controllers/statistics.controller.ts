@@ -68,4 +68,13 @@ export class StatisticsController {
       next(error);
     }
   }
+
+  async getFormsSummary(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await statisticsService.getFormsSummary(req.adminId!);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

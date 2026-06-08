@@ -6,6 +6,7 @@ import DashboardPage from "./pages/admin/DashboardPage";
 import FormListPage from "./pages/admin/FormListPage";
 import FormEditorPage from "./pages/admin/FormEditorPage";
 import FormStatisticsPage from "./pages/admin/FormStatisticsPage";
+import StatisticsOverviewPage from "./pages/admin/StatisticsOverviewPage";
 import NotFoundPage from "./pages/admin/NotFoundPage";
 import PublicFormPage from "./pages/public/PublicFormPage";
 
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Route path="forms/new" element={<FormEditorPage />} />
         <Route path="forms/:id/edit" element={<FormEditorPage />} />
         <Route path="forms/:id/statistics" element={<FormStatisticsPage />} />
+        <Route path="statistics" element={<StatisticsOverviewPage />} />
       </Route>
       <Route path="/form/:slug" element={<PublicFormPage />} />
       <Route path="*" element={<NotFoundPage />} />

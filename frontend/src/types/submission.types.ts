@@ -54,6 +54,7 @@ export interface Submission {
     quantity: number;
     sectionId: string;
   }>;
+  customText?: string;
 }
 
 export interface PaginatedSubmissions {

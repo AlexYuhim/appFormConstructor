@@ -121,13 +121,15 @@ const FormListPage: React.FC = () => {
   ];
 
   return (
-    <div>
+    <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
           marginBottom: 24,
+          flexWrap: "wrap",
+          gap: 12,
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
@@ -142,19 +144,21 @@ const FormListPage: React.FC = () => {
         </Button>
       </div>
 
-      <Card style={{ borderRadius: 12 }}>
-        <Table
-          dataSource={forms}
-          columns={columns}
-          loading={isLoading}
-          rowKey="_id"
-          pagination={false}
-          onRow={(record) => ({
-            style: { cursor: "pointer" },
-            onClick: () => navigate(`/admin/forms/${record._id}/edit`),
-          })}
-          locale={{ emptyText: "Нет созданных форм" }}
-        />
+      <Card style={{ borderRadius: 12, overflow: "hidden" }}>
+        <div style={{ overflowX: "auto" }}>
+          <Table
+            dataSource={forms}
+            columns={columns}
+            loading={isLoading}
+            rowKey="_id"
+            pagination={false}
+            onRow={(record) => ({
+              style: { cursor: "pointer" },
+              onClick: () => navigate(`/admin/forms/${record._id}/edit`),
+            })}
+            locale={{ emptyText: "Нет созданных форм" }}
+          />
+        </div>
       </Card>
 
       <Modal

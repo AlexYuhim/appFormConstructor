@@ -5,6 +5,7 @@ import {
   FormOutlined,
   CheckCircleOutlined,
   EditOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 import { useAuthStore } from "../../store/auth.store";
 import { useFormBuilder } from "../../hooks/useFormBuilder";
@@ -84,36 +85,71 @@ const DashboardPage: React.FC = () => {
         <Card style={{ textAlign: "center", padding: 40 }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>📝</div>
           <Typography.Paragraph>У вас пока нет форм</Typography.Paragraph>
-          <Button type="primary" onClick={() => navigate("/admin/forms/new")}>
+          <Button type="primary" onClick={() => navigate("/admin/forms")}>
             Создать первую форму
           </Button>
         </Card>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {forms.slice(0, 5).map((form) => (
-            <Card
-              key={form._id}
-              hoverable
-              size="small"
-              onClick={() => navigate(`/admin/forms/${form._id}/edit`)}
-            >
+            <Card key={form._id} size="small" style={{ borderRadius: 12 }}>
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 8,
                 }}
               >
-                <div>
+                <div
+                  style={{ cursor: "pointer", flex: 1, minWidth: 120 }}
+                  onClick={() => navigate(`/admin/forms/${form._id}/edit`)}
+                >
                   <Typography.Text strong>{form.name}</Typography.Text>
                   <br />
                   <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                     {form.isPublished ? "✅ Опубликована" : "📝 Черновик"}
                   </Typography.Text>
                 </div>
-                <Typography.Text style={{ color: "#6366f1", fontSize: 13 }}>
-                  Редактировать →
-                </Typography.Text>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Button
+                    type="link"
+                    size="small"
+                    icon={<BarChartOutlined />}
+                    onClick={() =>
+                      navigate(`/admin/forms/${form._id}/statistics`)
+                    }
+                    style={{
+                      color: "#6366f1",
+                      fontWeight: 500,
+                      padding: "4px 8px",
+                    }}
+                  >
+                    Статистика
+                  </Button>
+                  <Typography.Text style={{ color: "#94a3b8", fontSize: 13 }}>
+                    |
+                  </Typography.Text>
+                  <Typography.Text
+                    style={{
+                      color: "#6366f1",
+                      fontSize: 13,
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                    onClick={() => navigate(`/admin/forms/${form._id}/edit`)}
+                  >
+                    Редактировать →
+                  </Typography.Text>
+                </div>
               </div>
             </Card>
           ))}

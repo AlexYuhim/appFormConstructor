@@ -111,14 +111,23 @@ const FormEditor: React.FC = () => {
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
           marginBottom: 24,
+          flexWrap: "wrap",
+          gap: 12,
         }}
       >
         <Typography.Title level={4} style={{ margin: 0 }}>
           Редактор формы
         </Typography.Title>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            flexWrap: "wrap",
+            width: "auto",
+          }}
+        >
           <Button
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate("/admin/forms")}
@@ -206,6 +215,8 @@ const FormEditor: React.FC = () => {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: 16,
+          flexWrap: "wrap",
+          gap: 8,
         }}
       >
         <Typography.Title level={5} style={{ margin: 0 }}>

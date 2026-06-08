@@ -1,7 +1,6 @@
 import React from "react";
 import ProgressBar from "../ui/ProgressBar";
 import ItemStatusBadge from "./ItemStatusBadge";
-import { getTypeLabel } from "../../utils/format";
 
 interface StatisticsTableProps {
   sections: Array<{
@@ -94,17 +93,6 @@ const StatisticsTable: React.FC<StatisticsTableProps> = ({
                     fontWeight: 500,
                   }}
                 >
-                  Тип
-                </th>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: "8px",
-                    fontSize: "12px",
-                    color: "#64748b",
-                    fontWeight: 500,
-                  }}
-                >
                   Прогресс
                 </th>
                 <th
@@ -134,14 +122,6 @@ const StatisticsTable: React.FC<StatisticsTableProps> = ({
                     }}
                   >
                     {item.label}
-                  </td>
-                  <td style={{ padding: "12px 8px", fontSize: "13px" }}>
-                    {getTypeLabel(item.type as any)}
-                    {item.unit && (
-                      <span style={{ color: "#94a3b8", marginLeft: "4px" }}>
-                        ({item.unit})
-                      </span>
-                    )}
                   </td>
                   <td style={{ padding: "12px 8px", minWidth: "150px" }}>
                     <ProgressBar

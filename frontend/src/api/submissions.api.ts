@@ -35,4 +35,16 @@ export const submissionsApi = {
     );
     return data;
   },
+  getFormsSummary: async () => {
+    const { data } = await client.get<
+      Array<{
+        _id: string;
+        name: string;
+        slug: string;
+        isPublished: boolean;
+        totalSubmissions: number;
+      }>
+    >("/admin/forms/stats/summary");
+    return data;
+  },
 };

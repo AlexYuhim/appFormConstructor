@@ -15,7 +15,8 @@ import {
 } from "antd";
 import { ArrowLeftOutlined, DownloadOutlined } from "@ant-design/icons";
 import { submissionsApi } from "../../api/submissions.api";
-import { getStatusLabel, getTypeLabel } from "../../utils/format";
+import { formsApi } from "../../api/forms.api";
+import { getStatusLabel } from "../../utils/format";
 import type {
   StatisticsResponse,
   PaginatedSubmissions,
@@ -24,16 +25,27 @@ import type {
 const FormStatisticsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [formName, setFormName] = useState<string>("");
   const [stats, setStats] = useState<StatisticsResponse | null>(null);
   const [submissions, setSubmissions] = useState<PaginatedSubmissions | null>(
     null,
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (!id) return;
     setIsLoading(true);
+    setError(null);
+
+    // Load form name alongside statistics
+    formsApi
+      .getById(id)
+      .then((form) => {
+        setFormName(form.name);
+      })
+      .catch(() => {});
 
     Promise.all([
       submissionsApi.getStatistics(id),
@@ -43,7 +55,9 @@ const FormStatisticsPage: React.FC = () => {
         setStats(statsData);
         setSubmissions(subsData);
       })
-      .catch(() => {})
+      .catch((err) => {
+        setError(err?.response?.data?.error || "Ошибка загрузки статистики");
+      })
       .finally(() => setIsLoading(false));
   }, [id, page]);
 
@@ -51,6 +65,28 @@ const FormStatisticsPage: React.FC = () => {
     return (
       <div style={{ textAlign: "center", padding: 60 }}>
         <Spin size="large" tip="Загрузка статистики..." />
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div
+        style={{
+          textAlign: "center",
+          padding: 60,
+          color: "#ef4444",
+        }}
+      >
+        <Typography.Title level={4} type="danger">
+          {error}
+        </Typography.Title>
+        <Button
+          type="primary"
+          onClick={() => navigate("/admin/forms")}
+          style={{ marginTop: 16 }}
+        >
+          Вернуться к списку форм
+        </Button>
       </div>
     );
   }
@@ -62,13 +98,6 @@ const FormStatisticsPage: React.FC = () => {
       title: "Элемент",
       dataIndex: "label",
       key: "label",
-    },
-    {
-      title: "Тип",
-      dataIndex: "type",
-      key: "type",
-      render: (type: string) => getTypeLabel(type as any),
-      responsive: ["md" as const],
     },
     {
       title: "Прогресс",
@@ -118,6 +147,11 @@ const FormStatisticsPage: React.FC = () => {
               {i.quantity > 1 ? ` x${i.quantity}` : ""}
             </Tag>
           ))}
+          {record.customText && (
+            <Tag color="orange" style={{ marginBottom: 2 }}>
+              ✏️ Свой вариант: {record.customText}
+            </Tag>
+          )}
         </span>
       ),
     },
@@ -131,19 +165,31 @@ const FormStatisticsPage: React.FC = () => {
   ];
 
   return (
-    <div>
+    <div style={{ maxWidth: "100%", overflowX: "hidden" }}>
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
           marginBottom: 24,
+          flexWrap: "wrap",
+          gap: 12,
         }}
       >
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          Статистика
-        </Typography.Title>
-        <div style={{ display: "flex", gap: 8 }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <Typography.Title level={4} style={{ margin: 0 }}>
+            Статистика
+          </Typography.Title>
+          {formName && (
+            <Typography.Text
+              type="secondary"
+              style={{ fontSize: 14, display: "block", marginTop: 4 }}
+            >
+              Форма: <strong>{formName}</strong>
+            </Typography.Text>
+          )}
+        </div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <Button
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate("/admin/forms")}
@@ -188,7 +234,11 @@ const FormStatisticsPage: React.FC = () => {
                     key={section.sectionId}
                     title={section.sectionName}
                     size="small"
-                    style={{ marginBottom: 16 }}
+                    style={{
+                      marginBottom: 16,
+                      borderRadius: 12,
+                      overflow: "hidden",
+                    }}
                     extra={
                       <Typography.Text
                         type="secondary"
@@ -198,13 +248,15 @@ const FormStatisticsPage: React.FC = () => {
                       </Typography.Text>
                     }
                   >
-                    <Table
-                      dataSource={section.items}
-                      columns={itemColumns}
-                      rowKey="itemId"
-                      pagination={false}
-                      size="small"
-                    />
+                    <div style={{ overflowX: "auto" }}>
+                      <Table
+                        dataSource={section.items}
+                        columns={itemColumns}
+                        rowKey="itemId"
+                        pagination={false}
+                        size="small"
+                      />
+                    </div>
                   </Card>
                 ))}
               </div>
@@ -215,23 +267,25 @@ const FormStatisticsPage: React.FC = () => {
             label: `📋 Заявки (${submissions?.pagination?.total || 0})`,
             children: (
               <Card style={{ borderRadius: 12 }}>
-                <Table
-                  dataSource={submissions?.submissions || []}
-                  columns={submissionColumns}
-                  rowKey="id"
-                  pagination={
-                    submissions?.pagination
-                      ? {
-                          current: page,
-                          pageSize: submissions.pagination.limit,
-                          total: submissions.pagination.total,
-                          onChange: setPage,
-                          showSizeChanger: false,
-                        }
-                      : false
-                  }
-                  locale={{ emptyText: "Пока нет заявок" }}
-                />
+                <div style={{ overflowX: "auto" }}>
+                  <Table
+                    dataSource={submissions?.submissions || []}
+                    columns={submissionColumns}
+                    rowKey="id"
+                    pagination={
+                      submissions?.pagination
+                        ? {
+                            current: page,
+                            pageSize: submissions.pagination.limit,
+                            total: submissions.pagination.total,
+                            onChange: setPage,
+                            showSizeChanger: false,
+                          }
+                        : false
+                    }
+                    locale={{ emptyText: "Пока нет заявок" }}
+                  />
+                </div>
               </Card>
             ),
           },

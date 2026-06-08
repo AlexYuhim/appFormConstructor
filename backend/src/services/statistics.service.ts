@@ -107,6 +107,7 @@ export class StatisticsService {
         userSurname: sub.userSurname,
         submittedAt: sub.submittedAt,
         selectedItems: subSelectedItems,
+        customText: sub.customText || undefined,
       };
     });
 
@@ -121,5 +122,27 @@ export class StatisticsService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async getFormsSummary(adminId: string) {
+    const forms = await Form.find({ createdBy: adminId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const result = [];
+    for (const form of forms) {
+      const totalSubmissions = await Submission.countDocuments({
+        formId: form._id,
+      });
+      result.push({
+        _id: form._id,
+        name: form.name,
+        slug: form.slug,
+        isPublished: form.isPublished,
+        totalSubmissions,
+      });
+    }
+
+    return result;
   }
 }

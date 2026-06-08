@@ -14,6 +14,11 @@ const statisticsController = new StatisticsController();
 // All routes require auth
 router.use(authMiddleware);
 
+// ─── Statistics Overview (must be before :id routes) ───────
+router.get("/stats/summary", (req, res, next) =>
+  statisticsController.getFormsSummary(req as any, res, next),
+);
+
 // ─── Forms ─────────────────────────────────────────────────
 router.post("/", (req, res, next) =>
   formController.create(req as any, res, next),

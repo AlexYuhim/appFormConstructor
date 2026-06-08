@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { Row, Col, Spin } from "antd";
+import { Row, Col, Spin, Button } from "antd";
 import { useFormSubmission } from "../../hooks/useFormSubmission";
 import { useSocket } from "../../hooks/useSocket";
 import SectionBlock from "./SectionBlock";
@@ -10,8 +10,15 @@ import type { ItemStatusChanged } from "../../types/submission.types";
 
 const FormRenderer: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { currentForm, isLoading, error, submitted, loadForm, submitForm } =
-    useFormSubmission();
+  const {
+    currentForm,
+    isLoading,
+    error,
+    submitted,
+    loadForm,
+    submitForm,
+    reset,
+  } = useFormSubmission();
   const [selectedItems, setSelectedItems] = useState<
     Record<string, { itemId: string; quantity: number }>
   >({});
@@ -116,7 +123,21 @@ const FormRenderer: React.FC = () => {
       >
         <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
         <h2 style={{ marginBottom: 12 }}>Спасибо за участие!</h2>
-        <p style={{ color: "#64748b" }}>Ваша заявка успешно отправлена.</p>
+        <p style={{ color: "#64748b", marginBottom: 24 }}>
+          Ваша заявка успешно отправлена.
+        </p>
+        <Button
+          type="primary"
+          size="large"
+          onClick={() => {
+            setSelectedItems({});
+            setCustomText("");
+            reset();
+            if (slug) loadForm(slug);
+          }}
+        >
+          Заполнить ещё раз
+        </Button>
       </div>
     );
   }

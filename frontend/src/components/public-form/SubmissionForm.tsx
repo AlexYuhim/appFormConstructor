@@ -63,20 +63,14 @@ const SubmissionForm: React.FC<SubmissionFormProps> = ({
           >
             <Typography.Text style={{ fontSize: 14 }}>
               Подтверждаю согласие на{" "}
-              {privacyPolicyUrl ? (
-                <a
-                  href={privacyPolicyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "#6366f1", fontWeight: 500 }}
-                >
-                  обработку персональных данных
-                </a>
-              ) : (
-                <span style={{ color: "#6366f1", fontWeight: 500 }}>
-                  обработку персональных данных
-                </span>
-              )}
+              <a
+                href={privacyPolicyUrl || "#"}
+                target={privacyPolicyUrl ? "_blank" : undefined}
+                rel={privacyPolicyUrl ? "noopener noreferrer" : undefined}
+                style={{ color: "#6366f1", fontWeight: 500 }}
+              >
+                обработку персональных данных
+              </a>
             </Typography.Text>
           </Checkbox>
         </Form.Item>
