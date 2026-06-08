@@ -1,0 +1,35 @@
+services:
+  mongodb:
+    image: mongo:7
+    container_name: formbuilder-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: formbuilder-backend
+    ports:
+      - "5001:5000"
+    env_file: ./backend/.env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: formbuilder-frontend
+    ports:
+      - "3000:3000"
+    env_file: ./frontend/.env
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
