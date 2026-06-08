@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 build/
+plans/
 
 # Environment files
 .env
@@ -31,3 +32,4 @@ docker-data/
 # Misc
 coverage/
 .turbo/
+.roo
